@@ -1,7 +1,7 @@
 {
-  "name": "react-native-push-notification",
-  "version": "7.4.0",
-  "description": "React Native Local and Remote Notifications",
+  "name": "@sourabhkheterpal/react-native-push-notification",
+  "version": "0.1",
+  "description": "React Native Local and Remote Notifications and Local Notification Received Tracking",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -27,6 +27,5 @@
     "@react-native-community/push-notification-ios": "^1.8.0",
     "react-native": ">=0.33"
   },
-  "author": "zo0r <http://zo0r.me>",
   "license": "MIT"
 }
