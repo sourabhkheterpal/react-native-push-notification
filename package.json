@@ -1,6 +1,6 @@
 {
   "name": "@sourabhkheterpal/react-native-push-notification",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "React Native Local and Remote Notifications and Local Notification Received Tracking",
   "main": "index.js",
   "scripts": {
