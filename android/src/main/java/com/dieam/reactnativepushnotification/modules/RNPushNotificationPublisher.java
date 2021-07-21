@@ -12,13 +12,9 @@ import java.security.SecureRandom;
 
 import static com.dieam.reactnativepushnotification.modules.RNPushNotification.LOG_TAG;
 
-import java.util.Iterator;
-import java.util.Set;
-import com.facebook.react.bridge.Arguments;
-import com.facebook.react.bridge.WritableMap;
-import com.facebook.react.ReactApplication;
-import com.facebook.react.ReactInstanceManager;
-import com.facebook.react.bridge.ReactContext;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.content.ComponentName;
 
 public class RNPushNotificationPublisher extends BroadcastReceiver {
     final static String NOTIFICATION_ID = "notificationId";
@@ -28,25 +24,25 @@ public class RNPushNotificationPublisher extends BroadcastReceiver {
         int id = intent.getIntExtra(NOTIFICATION_ID, 0);
         long currentTime = System.currentTimeMillis();
 
-        Log.i(LOG_TAG, "NotificationPublisher: Prepare To Publish: " + id + ", Now Time: " + currentTime);
+        Log.i(LOG_TAG, "NotificationPublisher: " + id + ", Now Time: " + currentTime);
 
         final Bundle bundle = intent.getExtras();
 
         Log.v(LOG_TAG, "onMessageReceived: " + bundle);
 
+        Application applicationContext = (Application) context.getApplicationContext();
+        Intent intentReceived = new Intent("com.localNotification.RECEIVED");
+        intentReceived.putExtras(bundle);
+        PackageManager packageManager = applicationContext.getPackageManager();
+        List<ResolveInfo> infos = packageManager.queryBroadcastReceivers(intentReceived, 0);
+        for (ResolveInfo info : infos) {
+            ComponentName cn = new ComponentName(info.activityInfo.packageName,
+                    info.activityInfo.name);
+            intentReceived.setComponent(cn);
+            applicationContext.sendBroadcast(intentReceived);
+        }
+
         handleLocalNotification(context, bundle);
-    }
-
-    public static WritableMap bundleToMap(Bundle extras) {
-        WritableMap map = Arguments.createMap();
-
-        Set<String> ks = extras.keySet();
-        Iterator<String> iterator = ks.iterator();
-        while (iterator.hasNext()) {
-            String key = iterator.next();
-            map.putString(key, extras.getString(key));
-        }/*from   w ww .j  a  v  a 2s .c  o m*/
-        return map;
     }
 
     private void handleLocalNotification(Context context, Bundle bundle) {
@@ -61,14 +57,6 @@ public class RNPushNotificationPublisher extends BroadcastReceiver {
         RNPushNotificationHelper pushNotificationHelper = new RNPushNotificationHelper(applicationContext);
         
         Log.v(LOG_TAG, "sendNotification: " + bundle);
-
-        // NEW CODE: Construct and load our normal React JS code bundle
-        final ReactInstanceManager mReactInstanceManager = ((ReactApplication) applicationContext).getReactNativeHost().getReactInstanceManager();
-        ReactContext RCcontext = mReactInstanceManager.getCurrentReactContext();
-
-        RNPushNotificationJsDelivery jsDelivery = new RNPushNotificationJsDelivery(RCcontext);
-        WritableMap params = bundleToMap(bundle);
-        jsDelivery.sendEvent("DISPLAY_NOTIFICATION", params);
 
         pushNotificationHelper.sendToNotificationCentre(bundle);
     }

@@ -5,6 +5,9 @@
 
 React Native Local and Remote Notifications for iOS and Android
 
+## New Changes !
+# For tacking Local Notification Delivery (Not Supported by Library):
+Intent with `com.localNotification.RECEIVED` action will be fire so Client application can create BroadcastReceiver for the same and can do stuff on Local notification received.
 
 ## 🎉 Version 7.x is live ! 🎉
 
